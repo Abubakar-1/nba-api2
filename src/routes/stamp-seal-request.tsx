@@ -9,6 +9,7 @@ import {
 } from "@/api/stamp-seal-request";
 import DashboardHammerIcon from "@/assets/icons/dashboard-hammer-icon";
 import { NotifyError } from "@/components/toast/toast";
+import AuthContext from "@/context/auth-context";
 import {
   useStampRequestsQuery,
   useAdminStampSealOrdersQuery,
@@ -47,6 +48,7 @@ import { useEffect, useState } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 
 const StampSealRequest = () => {
+  const { user } = AuthContext.useContainer();
   const [searchValue, setSearchValue] = useState<string>("");
   const [pagination, setPagination] = useState({
     page: 1,
@@ -297,14 +299,16 @@ const StampSealRequest = () => {
         </div>
         <div className="col-span-2 lg:col-span-2 w-full ">
           <div className="w-full flex items-center justify-end">
-            <Button
-              dimension="lg"
-              variant="primary"
-              className="w-full lg:w-fit inline-flex items-center justify-center gap-2 text-white text-sm rounded-3xl hover:cursor-pointer bg-primary-500 px-4 py-3"
-              onClick={toggleExportModal}
-            >
-              Export records <ArrowDownTrayIcon className="w-5" />
-            </Button>
+            {user?.roles?.includes("SUPER_ADMIN") && (
+              <Button
+                dimension="lg"
+                variant="primary"
+                className="w-full lg:w-fit inline-flex items-center justify-center gap-2 text-white text-sm rounded-3xl hover:cursor-pointer bg-primary-500 px-4 py-3"
+                onClick={toggleExportModal}
+              >
+                Export records <ArrowDownTrayIcon className="w-5" />
+              </Button>
+            )}
           </div>
         </div>
         {/* filter component starts from here */}
