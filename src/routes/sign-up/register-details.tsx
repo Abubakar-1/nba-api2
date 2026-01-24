@@ -168,11 +168,13 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
         className="w-full lg:w-3/4 mb-3 flex flex-col items-start"
       >
         <h1 className="font-bold mb-2 text-2xl text-gray-800">
-          Complete your registration
+          {/* Complete your registration */}
+          Preview your information
         </h1>
 
         <p className="text-gray-500 mb-5 font-light text-sm text-left">
-          Please provide your details to complete the registration process.
+          Please enter your email address and select the checkbox then click on
+          the "Next" button to complete your registration.
         </p>
 
         <div className="w-full space-y-4">
@@ -188,7 +190,7 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
           />
 
           {/* Exam Number (Read-only) */}
-          <Input
+          {/* <Input
             label="Exam Number"
             id="exam_no"
             dimension="lg"
@@ -197,6 +199,20 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
             placeholder="e.g., EXM/2023/001"
             type="text"
             disabled
+          /> */}
+
+          {/* Email */}
+          <Input
+            label="Email Address *"
+            id="email"
+            dimension="lg"
+            variant="primary"
+            value={formData.email}
+            placeholder="your.email@example.com"
+            type="email"
+            onChange={(e) =>
+              handleChange("email", (e.target as HTMLInputElement).value)
+            }
           />
 
           {/* First Name (Read-only) */}
@@ -236,7 +252,7 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
           />
 
           {/* Gender */}
-          <div className="w-full">
+          {/* <div className="w-full">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Gender
             </label>
@@ -252,7 +268,7 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
               <option value="M">Male</option>
               <option value="F">Female</option>
             </Select>
-          </div>
+          </div> */}
 
           {/* Phone */}
           <Input
@@ -267,20 +283,6 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
               handleChange("phone", (e.target as HTMLInputElement).value)
             }
             disabled
-          />
-
-          {/* Email */}
-          <Input
-            label="Email Address *"
-            id="email"
-            dimension="lg"
-            variant="primary"
-            value={formData.email}
-            placeholder="your.email@example.com"
-            type="email"
-            onChange={(e) =>
-              handleChange("email", (e.target as HTMLInputElement).value)
-            }
           />
 
           {/* Branch */}
@@ -306,7 +308,7 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
           </div>
 
           {/* Year of Call */}
-          <Input
+          {/* <Input
             label="Year of Call"
             id="year_of_call"
             dimension="lg"
@@ -323,10 +325,10 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
               handleChange("year_of_call", value);
             }}
             disabled
-          />
+          /> */}
 
           {/* Legal Practice Area */}
-          <div className="w-full">
+          {/* <div className="w-full">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Legal Practice Area
             </label>
@@ -401,7 +403,7 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
               <option value="CIVIL_SERVICE">Civil Service</option>
               <option value="OTHERS">Others</option>
             </Select>
-          </div>
+          </div> */}
 
           {/* Agreement Checkbox */}
           <div className="mt-5 mb-5 w-full flex gap-3">
