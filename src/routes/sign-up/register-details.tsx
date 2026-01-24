@@ -169,7 +169,7 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
       >
         <h1 className="font-bold mb-2 text-2xl text-gray-800">
           {/* Complete your registration */}
-          Enter your email address to complete your registration
+          Enter and confirm your email address to complete your registration
         </h1>
 
         <p className="text-gray-500 mb-5 font-light text-sm text-left">
