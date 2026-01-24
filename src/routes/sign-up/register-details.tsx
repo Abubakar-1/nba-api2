@@ -169,7 +169,7 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
       >
         <h1 className="font-bold mb-2 text-2xl text-gray-800">
           {/* Complete your registration */}
-          Preview your information
+          Enter your email address to complete your registration
         </h1>
 
         <p className="text-gray-500 mb-5 font-light text-sm text-left">
@@ -178,17 +178,6 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
         </p>
 
         <div className="w-full space-y-4">
-          {/* SCN (Read-only) */}
-          <Input
-            label="SCN"
-            id="scn"
-            dimension="lg"
-            variant="primary"
-            value={scn}
-            type="text"
-            disabled
-          />
-
           {/* Exam Number (Read-only) */}
           {/* <Input
             label="Exam Number"
@@ -213,6 +202,17 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
             onChange={(e) =>
               handleChange("email", (e.target as HTMLInputElement).value)
             }
+          />
+
+          {/* SCN (Read-only) */}
+          <Input
+            label="SCN"
+            id="scn"
+            dimension="lg"
+            variant="primary"
+            value={scn}
+            type="text"
+            disabled
           />
 
           {/* First Name (Read-only) */}
