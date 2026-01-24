@@ -32,19 +32,19 @@ const StampRequestExport: FunctionComponent<Props> = ({
   });
 
   // Local state for the export specific filter (independent from parent)
-  const [exportRemarkStatus, setExportRemarkStatus] = useState("");
+  const [exportRequestType, setExportRequestType] = useState("");
 
   // Reset export filter when modal opens
   useEffect(() => {
     if (state) {
-      setExportRemarkStatus("");
+      setExportRequestType("");
     }
   }, [state]);
 
   const fetchStampRequest = useRequest<{
     start_date: string;
     end_date: string;
-    remark_status: string;
+    request_type: string;
   }>(getAdminStampSealOrdersNoPaginate);
 
   const today = new Date();
@@ -62,7 +62,7 @@ const StampRequestExport: FunctionComponent<Props> = ({
     const payload = {
       start_date: dates.start_date,
       end_date: dates.end_date,
-      remark_status: exportRemarkStatus || undefined,
+      request_type: exportRequestType || undefined,
     };
 
     const [response, _err] = await fetchStampRequest.makeRequest(
@@ -78,17 +78,17 @@ const StampRequestExport: FunctionComponent<Props> = ({
         [];
 
       // Perform local filtering (mostly just for search now, as status is handled by API ideally, but kept for robustness if API returns all)
-      if (exportRemarkStatus || filters.search) {
+      if (exportRequestType || filters.search) {
         data = data.filter((item: any) => {
           let matchesType = true;
           let matchesSearch = true;
 
           // Request Type Filter (Double check locally just in case)
-          if (exportRemarkStatus && exportRemarkStatus !== "ALL") {
-            const itemType = item.remark_status
-              ? item.remark_status.toUpperCase()
+          if (exportRequestType && exportRequestType !== "ALL") {
+            const itemType = item.request_type
+              ? item.request_type.toUpperCase()
               : "";
-            matchesType = itemType === exportRemarkStatus.toUpperCase();
+            matchesType = itemType === exportRequestType.toUpperCase();
           }
 
           // Search Filter (payer_name or recipient_scn)
@@ -120,8 +120,7 @@ const StampRequestExport: FunctionComponent<Props> = ({
           BRANCH: d.branch,
           REQUEST_TYPE: d.request_type,
           "SEAL TYPE": d.seal_type,
-          STATUS: d.remark_status || "PENDING",
-          TYPE: d.remark_status,
+          STATUS: d.remark_status,
         };
       });
       exportToExcel(dataToExport);
@@ -205,21 +204,18 @@ const StampRequestExport: FunctionComponent<Props> = ({
 
           <div className="w-full">
             <label className="text-sm text-gray-400 font-medium mb-1 block">
-              Remark Status
+              Request Type
             </label>
             <Select
               dimension="lg"
-              value={exportRemarkStatus}
-              onChange={(e) => setExportRemarkStatus(e.currentTarget.value)}
+              value={exportRequestType}
+              onChange={(e) => setExportRequestType(e.currentTarget.value)}
               className="w-full"
             >
               <>
                 <option value="">ALL</option>
-                <option value="PENDING">Pending</option>
-                <option value="APPROVED">Approved</option>
-                <option value="REJECTED">Rejected</option>
-                <option value="PROCESSING">Processing</option>
-                <option value="COMPLETED">Completed</option>
+                <option value="PUBLIC">Public</option>
+                <option value="PRIVATE">Private</option>
               </>
             </Select>
           </div>
