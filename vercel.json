@@ -1,0 +1,14 @@
+{
+  "build": {
+    "env": {
+      "NODE_VERSION": "22.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://nbabackend.online:4443/$1"
+    },
+    { "source": "/(.*)", "destination": "/maintenance.html" }
+  ]
+}

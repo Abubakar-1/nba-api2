@@ -1,0 +1,132 @@
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #000000;
+}
+
+body {
+  margin: 0;
+  font-family: "Urbanist", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  font-family: "Urbanist", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+div.circle_loader {
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  border-top-color: var(--primary-color);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.receipt-background {
+  min-height: 100vh;
+  display: block;
+}
+.receipt-background::before {
+  content: "";
+  background-image: url(../images/nba_logo2.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.05;
+}
+
+.receipt-logo {
+  min-height: 90px;
+  display: block;
+}
+.receipt-logo::before {
+  content: "";
+  background-image: url(../images/nba_logo.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  position: absolute;
+  /* top: 0; */
+  bottom: 5;
+  left: 0;
+  right: 0;
+  height: 160px;
+  opacity: 0.25;
+}
+
+.conference-receipt-logo {
+  min-height: 90px;
+  display: block;
+}
+.conference-receipt-logo::before {
+  content: "";
+  background-image: url(../images/confLogo2.png);
+  background-repeat: no-repeat;
+  background-position: calc(100% - 40px);
+  background-size: contain;
+  position: absolute;
+  /* top: 0; */
+  bottom: 5;
+  left: 0;
+  right: 0;
+  height: 300px;
+  opacity: 0.25;
+}
+
+.vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+}
+
+/* input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+} */
+
+input[type="password"] {
+  /* Set the font-size to adjust the size of the dot */
+  font-size: 20px;
+  font-weight: 1000;
+
+  /* Set the height and width of the dot */
+
+  /* Add additional styles as needed */
+}
+
+/* .input-password {
+  font-size: 18px;
+
+  height: 16px;
+  width: 16px;
+
+} */
+
+.Toastify__toast-body {
+  white-space: pre-line;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
