@@ -9,6 +9,6 @@
       "source": "/api/(.*)",
       "destination": "https://nbabackend.online:4443/$1"
     },
-    { "source": "/(.*)", "destination": "/maintenance.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
