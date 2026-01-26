@@ -271,7 +271,7 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
           </div> */}
 
           {/* Phone */}
-          <Input
+          {/* <Input
             label="Phone Number"
             id="phone"
             dimension="lg"
@@ -283,10 +283,10 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
               handleChange("phone", (e.target as HTMLInputElement).value)
             }
             disabled
-          />
+          /> */}
 
           {/* Branch */}
-          <div className="w-full">
+          {/* <div className="w-full">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Branch
             </label>
@@ -305,7 +305,7 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
                 </option>
               ))}
             </Select>
-          </div>
+          </div> */}
 
           {/* Year of Call */}
           {/* <Input

@@ -32,11 +32,11 @@ const EditAdmin: FunctionalComponent<EditProps> = ({
 
   const hardcoded_roles = [
     "SUPER ADMIN",
-    "PRACTICING LAWYER",
+    // "PRACTICING LAWYER",
     "ADMIN",
-    "STUDENT LAWYER",
+    // "STUDENT LAWYER",
     "BAR SERVICES",
-    "GUEST",
+    // "GUEST",
     "CONFERENCE ADMIN",
   ];
 
