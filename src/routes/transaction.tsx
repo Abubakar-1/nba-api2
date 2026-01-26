@@ -18,6 +18,7 @@ import {
   verifyStampAndSealPayment,
   verifyPaymentByReference,
   payBalance,
+  getTransactionStatus,
 } from "@/api/payment";
 import { useRequest } from "@/components/hooks/use-request";
 import {
@@ -92,6 +93,11 @@ const Transaction: FunctionalComponent = memo(() => {
   const [payingBalanceId, setPayingBalanceId] = useState<
     number | string | null
   >(null);
+
+  // Store transaction status data (year and amount) for each BPF transaction
+  const [bpfStatusData, setBpfStatusData] = useState<
+    Record<string, { year?: number; amount?: number }>
+  >({});
 
   const [paginationState, setPaginationState] = useState<any>();
   const [pagination, setPagination] = useState({
@@ -550,6 +556,44 @@ const Transaction: FunctionalComponent = memo(() => {
       }
     }
   }, [response, error]);
+
+  // Fetch transaction status for BPF transactions to get year and amount
+  useEffect(() => {
+    const fetchBPFStatus = async () => {
+      if (!response?.items) return;
+
+      const bpfTransactions = response.items.filter((item: ITransactions) =>
+        item.payment_type?.includes("BPF"),
+      );
+
+      if (bpfTransactions.length === 0) return;
+
+      const statusDataMap: Record<string, { year?: number; amount?: number }> =
+        {};
+
+      for (const transaction of bpfTransactions) {
+        try {
+          const transactionId = transaction.transaction_id || transaction.id;
+          const [statusResponse, err] = await getTransactionStatus({
+            transaction_id: transactionId,
+          });
+
+          if (!err && statusResponse) {
+            statusDataMap[transactionId] = {
+              year: statusResponse.year,
+              amount: statusResponse.amount,
+            };
+          }
+        } catch (error) {
+          logger.error("Failed to fetch transaction status", error);
+        }
+      }
+
+      setBpfStatusData(statusDataMap);
+    };
+
+    fetchBPFStatus();
+  }, [response?.items]);
 
   const formik = useFormik({
     initialValues: { payment_type: "", from_date: "", to_date: "" },
@@ -1042,26 +1086,61 @@ const Transaction: FunctionalComponent = memo(() => {
                     </p>
                   </TableCell>
                   <TableCell alignment="left">
-                    {row.payment_type?.includes("BPF") ? (
-                      <button
-                        type="button"
-                        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={
-                          payBalanceRequest.isLoading || !!payingBalanceId
-                        }
-                        onClick={() => handlePayBalance(row)}
-                      >
-                        {(payingBalanceId === row.transaction_id ||
-                          payingBalanceId === row.id) &&
-                        payBalanceRequest.isLoading ? (
-                          <BtnLoader outline={true} />
-                        ) : (
-                          "Pay balance bpf"
-                        )}
-                      </button>
-                    ) : (
-                      <span className="text-gray-400">—</span>
-                    )}
+                    {(() => {
+                      // Only show for BPF payments
+                      if (!row.payment_type?.includes("BPF")) {
+                        return <span className="text-gray-400">—</span>;
+                      }
+
+                      // Get transaction ID
+                      const transactionId = row.transaction_id || row.id;
+
+                      // Get status data from API response
+                      const statusData = bpfStatusData[transactionId];
+
+                      // If we don't have status data yet, show loading or dash
+                      if (!statusData) {
+                        return <span className="text-gray-400">—</span>;
+                      }
+
+                      // Check if we should show the pay balance button based on year and amount from API
+                      const year = statusData.year;
+                      const amount = statusData.amount || 0;
+
+                      let shouldShowButton = false;
+
+                      // Check year-specific amount thresholds
+                      if (year === 2012 && amount < 25000) {
+                        shouldShowButton = true;
+                      } else if (year === 2017 && amount < 17500) {
+                        shouldShowButton = true;
+                      } else if (year === 2022 && amount < 10000) {
+                        shouldShowButton = true;
+                      }
+
+                      if (!shouldShowButton) {
+                        return <span className="text-gray-400">—</span>;
+                      }
+
+                      return (
+                        <button
+                          type="button"
+                          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          disabled={
+                            payBalanceRequest.isLoading || !!payingBalanceId
+                          }
+                          onClick={() => handlePayBalance(row)}
+                        >
+                          {(payingBalanceId === row.transaction_id ||
+                            payingBalanceId === row.id) &&
+                          payBalanceRequest.isLoading ? (
+                            <BtnLoader outline={true} />
+                          ) : (
+                            "Pay balance bpf"
+                          )}
+                        </button>
+                      );
+                    })()}
                   </TableCell>
                   <TableCell alignment="left">
                     {row.status.toUpperCase() === "PENDING" ? (
