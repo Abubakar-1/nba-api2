@@ -150,6 +150,7 @@ export {
   addLawyerByFilePreview,
   addLawyerByFileComplete,
   getBranchLawyers,
+  bulkUploadLawyers,
 };
 
 function getBranchLawyers(data: any) {
@@ -159,6 +160,19 @@ function getBranchLawyers(data: any) {
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
     }).get(`/admin/lawyers/branch?${params}`),
+  );
+}
+
+function bulkUploadLawyers(body: { file: File }) {
+  const formData = new FormData();
+  formData.append("file", body.file);
+  return handleRequest(() =>
+    clientRequest({
+      baseURL: BASE_URL,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }).post("/admin/lawyers/bulk-upload", formData),
   );
 }
 

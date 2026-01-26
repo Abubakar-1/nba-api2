@@ -11,7 +11,7 @@ function paymentInvoice(body: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).post("/bpf-payment/initialize", body)
+    }).post("/bpf-payment/initialize", body),
   );
 }
 
@@ -20,7 +20,7 @@ function generateInvoicePreview(body: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).post("/bpf-payment/initialize", body)
+    }).post("/bpf-payment/initialize", body),
   );
 }
 
@@ -29,7 +29,7 @@ function generateBranchDuesInvoicePreview(body: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).post("/branch-dues/initialize", body)
+    }).post("/branch-dues/initialize", body),
   );
 }
 
@@ -38,7 +38,7 @@ function verifyPayment(body: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).post(`/bpf-payment/verify`, body)
+    }).post(`/bpf-payment/verify`, body),
   );
 }
 
@@ -47,7 +47,7 @@ function verifyStampAndSealPayment(body: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).post(`/stamp-seal/verify`, body)
+    }).post(`/stamp-seal/verify`, body),
   );
 }
 
@@ -56,7 +56,7 @@ function verifyBranchDuesPayment(body: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).post(`/branch-dues/verify`, body)
+    }).post(`/branch-dues/verify`, body),
   );
 }
 
@@ -68,7 +68,7 @@ function verifyBranchDuesImmediately(params: {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).get(`/branch-dues/verify-immediately`, { params })
+    }).get(`/branch-dues/verify-immediately`, { params }),
   );
 }
 
@@ -78,7 +78,7 @@ function getStampItems() {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).get("/stamp-seal/prices")
+    }).get("/stamp-seal/prices"),
   );
 }
 
@@ -87,7 +87,7 @@ function getTransactionStatus(params?: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).get(`/bpf-payment/status`, { params })
+    }).get(`/bpf-payment/status`, { params }),
   );
 }
 
@@ -96,7 +96,7 @@ function getBranchDuesStatus(params?: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).get(`/branch-dues/status`, { params })
+    }).get(`/branch-dues/status`, { params }),
   );
 }
 
@@ -105,7 +105,7 @@ function getBPFHistory(params?: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).get(`/bpf-payment/history`, { params })
+    }).get(`/bpf-payment/history`, { params }),
   );
 }
 
@@ -114,7 +114,7 @@ function getBranchDuesHistory(params?: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).get(`/branch-dues/history`, { params })
+    }).get(`/branch-dues/history`, { params }),
   );
 }
 
@@ -124,7 +124,7 @@ function initializeStampPayment(body: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).post(`/stamp-seal/orders`, body)
+    }).post(`/stamp-seal/orders`, body),
   );
 }
 
@@ -133,7 +133,7 @@ function uploadStampAndSealDoc(data: IUploadStampDocument) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).put(`/stamp-seal/orders/${data.orderId || 1}/upload-attachment`, data)
+    }).put(`/stamp-seal/orders/${data.orderId || 1}/upload-attachment`, data),
   );
 }
 
@@ -156,7 +156,17 @@ export {
   verifyBPFImmediately,
   verifyStampAndSealPayment,
   verifyPaymentByReference,
+  payBalance,
 };
+
+function payBalance(body: any) {
+  return handleRequest(() =>
+    clientRequest({
+      headers: { "ngrok-skip-browser-warning": "your-value" },
+      baseURL: BASE_URL,
+    }).post("/bpf-payment/pay-balance", body),
+  );
+}
 
 function submitBranchFeeProof(body: any) {
   return handleRequest(() =>
@@ -166,7 +176,7 @@ function submitBranchFeeProof(body: any) {
         "Content-Type": "multipart/form-data",
       },
       baseURL: BASE_URL,
-    }).post(`/stamp-seal/branch-fee/submit-payment`, body)
+    }).post(`/stamp-seal/branch-fee/submit-payment`, body),
   );
 }
 
@@ -179,7 +189,7 @@ function verifyBPFImmediately(params: {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).get(`/bpf-payment/verify-immediately`, { params })
+    }).get(`/bpf-payment/verify-immediately`, { params }),
   );
 }
 
@@ -188,7 +198,7 @@ function getStampOrders(params?: any) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).get(`/stamp-seal/orders`, { params })
+    }).get(`/stamp-seal/orders`, { params }),
   );
 }
 
@@ -198,6 +208,6 @@ function verifyPaymentByReference(reference: string) {
     clientRequest({
       headers: { "ngrok-skip-browser-warning": "your-value" },
       baseURL: BASE_URL,
-    }).patch(`/payments/${reference}/verify`)
+    }).patch(`/payments/${reference}/verify`),
   );
 }

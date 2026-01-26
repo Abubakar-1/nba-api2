@@ -1,6 +1,6 @@
 import { IBranch } from "@/api/interfaces/branch";
 import { IUploadLawyerPreview, LawyerProp } from "@/api/interfaces/lawyers";
-import { addLawyer, addLawyerByFilePreview } from "@/api/lawyers";
+import { addLawyer, bulkUploadLawyers } from "@/api/lawyers";
 import AddMultipleIcon from "@/assets/icons/add-multiple-icon";
 import AddSingleIcon from "@/assets/icons/add-single-icon";
 import ConfirmIcon from "@/assets/icons/confirm-icon";
@@ -23,7 +23,6 @@ import { FunctionalComponent } from "preact";
 import { Fragment } from "preact";
 import { ChangeEvent } from "preact/compat";
 import { useState } from "preact/hooks";
-import PreviewLawyerUpload from "./preview-lawyer";
 
 interface AddProps {
   state: boolean;
@@ -38,19 +37,13 @@ const AddLawyer: FunctionalComponent<AddProps> = ({
   branch,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadPreviewState, setUploadPreviewState] = useState(false);
-  const [uploadPreviewResponse, setUploadPreviewResponse] =
-    useState<IUploadLawyerPreview[]>();
   const [singleModalOpen, setSingleModalOpen] = useState(false);
   const [multipleUploadModalOpen, setMultipleUploadModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isPreview, setIsPreview] = useState<boolean>(false);
-  const [isMultiplePreview, setIsMultiplePreview] = useState<boolean>(false);
 
   const addLawyerRequest = useRequest<LawyerProp>(addLawyer);
-  const uplaodLawyerRequest = useRequest<{ uploadFile: File }>(
-    addLawyerByFilePreview,
-  );
+  const uploadLawyerRequest = useRequest<{ file: File }>(bulkUploadLawyers);
 
   async function submit(body: any) {
     const [response, _err] = await addLawyerRequest.makeRequest(body);
@@ -69,23 +62,54 @@ const AddLawyer: FunctionalComponent<AddProps> = ({
     }
   }
 
-  async function uploadPreview(file: { uploadFile: File }) {
-    const [response, _err] = await uplaodLawyerRequest.makeRequest(file);
+  async function submitBulkUpload() {
+    if (!selectedFile) return;
+    const [response, _err] = await uploadLawyerRequest.makeRequest({
+      file: selectedFile,
+    });
     if (!_err) {
-      setUploadPreviewResponse(response);
-      if (response.length < 1) {
-        NotifyError(
-          "Error! Please ensure the file you are uploading is not empty.",
-        );
+      const results = response?.results;
+
+      if (results) {
+        const { successful, failed, errors } = results;
+
+        if (failed === 0) {
+          // Complete success
+          setMultipleUploadModalOpen(false);
+          setSelectedFile(null);
+          setIsOpen(true);
+          if (refresh) refresh(); // Refresh the table
+        } else {
+          // Partial success or failure
+          if (successful > 0) {
+            NotifySuccess(
+              `Upload complete. ${successful} records added successfully.`,
+            );
+            setMultipleUploadModalOpen(false);
+            setSelectedFile(null);
+            if (refresh) refresh(); // Refresh to show the successful ones
+          }
+
+          if (failed > 0) {
+            const firstError = errors?.[0]?.error || "Unknown error";
+            const moreErrors =
+              failed > 1 ? ` (and ${failed - 1} other failures)` : "";
+            NotifyError(
+              `Failed to upload ${failed} records. ${firstError}${moreErrors}`,
+            );
+          }
+        }
       } else {
-        setUploadPreviewState(true);
+        // Fallback for unexpected structure, assume success if 200 OK
+        setMultipleUploadModalOpen(false);
+        setSelectedFile(null);
+        setIsOpen(true);
+        if (refresh) refresh();
       }
     } else if (_err && _err?.data) {
       NotifyError(_err?.data?.info);
-      return;
     } else {
       NotifyError(_err?.info);
-      return;
     }
   }
 
@@ -122,20 +146,7 @@ const AddLawyer: FunctionalComponent<AddProps> = ({
     const inputElement = event.target as HTMLInputElement;
     if (inputElement.files && inputElement.files.length > 0) {
       setSelectedFile(inputElement.files[0]);
-      uploadPreview({ uploadFile: inputElement.files[0] });
     }
-  };
-  const handlePreview = () => {
-    setMultipleUploadModalOpen(!multipleUploadModalOpen);
-    setIsMultiplePreview(!isMultiplePreview);
-  };
-
-  const handleLawyerUploadSuccess = () => {
-    setIsMultiplePreview(false);
-    setMultipleUploadModalOpen(false);
-    setUploadPreviewState(false);
-    setIsOpen(true);
-    if (refresh) refresh();
   };
 
   return (
@@ -632,18 +643,18 @@ const AddLawyer: FunctionalComponent<AddProps> = ({
         onClose={() => setMultipleUploadModalOpen(false)}
         dimensions="xl"
       >
-        <form onSubmit={() => {}}>
+        <div className="w-full">
           <h1 className="text-lg lg:text-2xl font-bold text-black mb-6">
             Add Multiple Lawyers
           </h1>
           <p className="mb-5">
-            {uploadPreviewState ? "File uploaded" : "Upload CSV file"}
+            {selectedFile ? "File selected" : "Upload CSV file"}
           </p>
           <div className="w-full h-full flex justify-center">
-            <PageLoader isOutlined={uplaodLawyerRequest.isLoading} />
+            <PageLoader isOutlined={uploadLawyerRequest.isLoading} />
           </div>
 
-          {!uploadPreviewState ? (
+          {!selectedFile ? (
             <div>
               <label
                 htmlFor="file-upload"
@@ -655,7 +666,7 @@ const AddLawyer: FunctionalComponent<AddProps> = ({
                   name="file-upload"
                   onChange={handleFileChange}
                   type="file"
-                  accept=".png, .jpg, .jpeg, .xlsx"
+                  accept=".png, .jpg, .jpeg, .xlsx, .xls, .csv"
                   className="sr-only"
                 />
                 <div className=" flex gap-6 w-fit">
@@ -682,44 +693,40 @@ const AddLawyer: FunctionalComponent<AddProps> = ({
               </a>
             </div>
           ) : (
-            <div className=" p-2 w-full flex justify-between items-center rounded relative bg-gray-100 h-12">
-              <div className=" flex justify-left items-center h-full gap-2 w-3/5">
-                <DocumentTextIcon className="h-5 w-5 text-primary-500" />
-                <p className="text-xs">{selectedFile?.name || " "}</p>
-                <div className="h-1 w-1 bg-gray-700 rounded-full"></div>
-                <button
-                  type="button"
-                  className="text-primary-500 text-sm"
-                  onClick={handlePreview}
-                >
-                  Preview
-                </button>
-                {/* <div className='absolute left-0 top-0 h-10 w-10 rounded-full bg-red-500'></div> */}
+            <div className="w-full">
+              <div className=" p-2 w-full flex justify-between items-center rounded relative bg-gray-100 h-12 mb-6">
+                <div className=" flex justify-left items-center h-full gap-2 w-3/5">
+                  <DocumentTextIcon className="h-5 w-5 text-primary-500" />
+                  <p className="text-xs">{selectedFile?.name || " "}</p>
+                  <div className="h-1 w-1 bg-gray-700 rounded-full"></div>
+                  <p className="text-xs">
+                    {selectedFile?.size
+                      ? (selectedFile.size / 1024).toFixed(2) + " kb"
+                      : " "}
+                  </p>
+                </div>
+
+                <XCircleIcon
+                  role="button"
+                  onClick={() => {
+                    setSelectedFile(null);
+                  }}
+                  className="absolute w-7 h-7 text-red-500 -top-4 -right-2"
+                />
               </div>
-              <p className="text-xs">
-                {selectedFile?.size
-                  ? (selectedFile.size / 1024).toFixed(2) + "mb"
-                  : " "}
-              </p>
-              <XCircleIcon
-                role="button"
-                onClick={() => {
-                  setUploadPreviewState(false);
-                  setSelectedFile(null);
-                }}
-                className="absolute w-7 h-7 text-red-500 -top-4 -right-2"
-              />
+
+              <Button
+                variant="primary"
+                dimension="lg"
+                onClick={submitBulkUpload}
+                isLoading={uploadLawyerRequest.isLoading}
+              >
+                Add lawyers
+              </Button>
             </div>
           )}
-        </form>
+        </div>
       </Modal>
-      <PreviewLawyerUpload
-        state={isMultiplePreview}
-        handleModalClose={handlePreview}
-        file={selectedFile}
-        previewResponse={uploadPreviewResponse}
-        handleLawyerUploadSuccess={handleLawyerUploadSuccess}
-      />
     </>
   );
 };

@@ -17,6 +17,7 @@ import {
   verifyPayment,
   verifyStampAndSealPayment,
   verifyPaymentByReference,
+  payBalance,
 } from "@/api/payment";
 import { useRequest } from "@/components/hooks/use-request";
 import {
@@ -88,6 +89,9 @@ const Transaction: FunctionalComponent = memo(() => {
   );
   const [gatewayModalOpen, setGatewayModalOpen] = useState(false);
   const [paymentUrl, setPaymentUrl] = useState("");
+  const [payingBalanceId, setPayingBalanceId] = useState<
+    number | string | null
+  >(null);
 
   const [paginationState, setPaginationState] = useState<any>();
   const [pagination, setPagination] = useState({
@@ -114,6 +118,7 @@ const Transaction: FunctionalComponent = memo(() => {
   const verifyStampAndSealPaymentRequest = useRequest(
     verifyStampAndSealPayment,
   );
+  const payBalanceRequest = useRequest(payBalance);
 
   // React Query hooks for transactions
   const transactionFilters: ITransactionProps = {
@@ -481,6 +486,36 @@ const Transaction: FunctionalComponent = memo(() => {
     },
     [],
   );
+
+  const handlePayBalance = async (transaction: ITransactions) => {
+    try {
+      const txId = transaction.transaction_id || transaction.id;
+      setPayingBalanceId(txId);
+      const payload = {
+        payment_gateway: "flutterwave",
+        redirect_url: window.location.origin + "/transaction",
+      };
+      const [res, err] = await payBalanceRequest.makeRequest(payload);
+
+      if (err) {
+        // Check for specific error message from API response
+        const errorMessage =
+          err?.data?.message || err?.message || "Failed to initiate payment";
+        return NotifyError(errorMessage);
+      }
+
+      if (res?.payment_link || res?.authorization_url) {
+        setPaymentUrl(res?.payment_link || res?.authorization_url);
+        setGatewayModalOpen(true);
+      } else {
+        NotifyError("No payment link returned");
+      }
+    } catch (error: any) {
+      NotifyError(error?.message || "An error occurred");
+    } finally {
+      setPayingBalanceId(null);
+    }
+  };
 
   useEffect(() => {
     if (error) {
@@ -971,6 +1006,7 @@ const Transaction: FunctionalComponent = memo(() => {
               <TableHeadItem>DATE</TableHeadItem>
               <TableHeadItem>AMOUNT</TableHeadItem>
               <TableHeadItem>STATUS</TableHeadItem>
+              <TableHeadItem>PAY BALANCE</TableHeadItem>
               <TableHeadItem>ACTION</TableHeadItem>
             </TableHead>
             <TableBody>
@@ -1004,6 +1040,28 @@ const Transaction: FunctionalComponent = memo(() => {
                     >
                       {row.status}
                     </p>
+                  </TableCell>
+                  <TableCell alignment="left">
+                    {row.payment_type?.includes("BPF") ? (
+                      <button
+                        type="button"
+                        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={
+                          payBalanceRequest.isLoading || !!payingBalanceId
+                        }
+                        onClick={() => handlePayBalance(row)}
+                      >
+                        {(payingBalanceId === row.transaction_id ||
+                          payingBalanceId === row.id) &&
+                        payBalanceRequest.isLoading ? (
+                          <BtnLoader outline={true} />
+                        ) : (
+                          "Pay balance bpf"
+                        )}
+                      </button>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
                   </TableCell>
                   <TableCell alignment="left">
                     {row.status.toUpperCase() === "PENDING" ? (

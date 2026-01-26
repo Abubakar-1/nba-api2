@@ -99,6 +99,7 @@ const EditLawyer: FunctionalComponent<EditProps> = ({
       address: "",
       branch: "",
       date_of_call: "",
+      year_of_call: "",
       state_code: "",
       state_name: "",
       gender: "",
@@ -124,7 +125,7 @@ const EditLawyer: FunctionalComponent<EditProps> = ({
         // email: values.email,
         phone: values.phone,
         middle_name: values.middle_name,
-        nba_id: values.scn,
+        scn: values.scn,
         exam_no: values.exam_no,
         gender: values.gender,
         dob: values.dob,
@@ -137,9 +138,7 @@ const EditLawyer: FunctionalComponent<EditProps> = ({
         is_honorable_bencher: values.is_honorable_bencher,
         is_san: values.is_san,
         date_of_call: values.date_of_call, // Assuming format is already YYYY-MM-DD or handled
-        year_of_call: values.date_of_call
-          ? new Date(values.date_of_call).getFullYear()
-          : new Date().getFullYear(),
+        year_of_call: values.year_of_call,
         area_of_practice: values.area_of_practice,
         rank: values.rank,
         is_profile_public: values.is_profile_public,
@@ -167,6 +166,7 @@ const EditLawyer: FunctionalComponent<EditProps> = ({
         address: data.address ?? "",
         branch: data.branch ?? "",
         date_of_call: data.date_of_call ? data.date_of_call.split("T")[0] : "",
+        year_of_call: data.year_of_call,
         state_code: data.state_code
           ? States.filter((el) => el.code === data.state_code)[0].code
           : "",
@@ -436,6 +436,25 @@ const EditLawyer: FunctionalComponent<EditProps> = ({
                 min="1800-01-01"
                 max={new Date().toISOString().split("T")[0]}
                 autoComplete="date_of_call"
+                error={
+                  form.touched.date_of_call
+                    ? form.errors.date_of_call
+                    : undefined
+                }
+              />
+            </div>
+            <div className="mt-5 w-full">
+              <Input
+                label="Year of call"
+                id="year_of_call"
+                dimension="lg"
+                variant="primary"
+                {...form.getFieldProps("year_of_call")}
+                disabled={!isSuperAdmin}
+                type="number"
+                min="1800"
+                max={new Date().getFullYear()}
+                autoComplete="year_of_call"
                 error={
                   form.touched.date_of_call
                     ? form.errors.date_of_call
