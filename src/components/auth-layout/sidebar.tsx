@@ -330,7 +330,9 @@ const Sidebar = ({ sidebarOpen }: Props) => {
                 </li>
               )}
 
-              {ACCESS_ROLES.payment.some((v) => user.roles.includes(v)) && (
+              {ACCESS_ROLES.payment_menu.some((v) =>
+                user.roles.includes(v),
+              ) && (
                 <div
                   className={`${
                     openParent === "pay" && isOpen === true

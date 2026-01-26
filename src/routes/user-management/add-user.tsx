@@ -48,11 +48,16 @@ const AddUser: FunctionalComponent<AddProps> = ({
       handleAddAdminSuccess();
       form.resetForm();
       if (refresh) refresh();
-    } else if (_err && _err?.data) {
-      NotifyError(_err?.data?.info);
-      return;
     } else {
-      NotifyError(_err?.info);
+      // Handle error - check multiple possible error message fields
+      const errorMessage =
+        _err?.data?.message ||
+        _err?.data?.info ||
+        _err?.data?.error ||
+        _err?.message ||
+        _err?.info ||
+        "Failed to create user. Please try again.";
+      NotifyError(errorMessage);
       return;
     }
   }

@@ -121,6 +121,7 @@ const UserManagement = () => {
   useEffect(() => {
     setPaginationState({
       ...pagination,
+      page_size: pagination.limit, // Add page_size for Pagination component
       status: filter.search,
     });
   }, [pagination]);

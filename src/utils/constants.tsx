@@ -148,7 +148,7 @@ export const ACCESS_ROLES = {
   ],
   verified_lawyer: ["SUPER_ADMIN", "ADMIN"],
   verified_list: ["SUPER_ADMIN", "ADMIN"],
-  payment: ["PRACTICING_LAWYER", "BAR_SERVICES"],
+  payment: ["PRACTICING_LAWYER", "BAR_SERVICES", "SUPER_ADMIN", "ADMIN"],
   transaction: [
     "BAR_SERVICES",
     "PRACTICING_LAWYER",
@@ -172,4 +172,6 @@ export const ACCESS_ROLES = {
     "ADMIN",
     "CONFERENCE_ADMIN",
   ],
+  branch_dashboard: ["BRANCH_ADMIN"],
+  payment_menu: ["PRACTICING_LAWYER", "BAR_SERVICES"], // Sidebar menu visibility only
 };
