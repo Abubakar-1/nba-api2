@@ -31,13 +31,13 @@ const EditAdmin: FunctionalComponent<EditProps> = ({
   const getRolesRequest = useFetcher<IRoles[]>(getRoles);
 
   const hardcoded_roles = [
-    "SUPER_ADMIN",
-    "PRACTICING_LAWYER",
+    "SUPER ADMIN",
+    "PRACTICING LAWYER",
     "ADMIN",
-    "STUDENT_LAWYER",
-    "BAR_SERVICES",
+    "STUDENT LAWYER",
+    "BAR SERVICES",
     "GUEST",
-    "CONFERENCE_ADMIN",
+    "CONFERENCE ADMIN",
   ];
 
   async function submit(values: any) {
