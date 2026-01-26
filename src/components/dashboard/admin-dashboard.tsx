@@ -52,7 +52,7 @@ const AdminDashboard: FunctionalComponent<AdminDashboardProps> = memo(
       const sortedMonthData = summary.sort(
         (a, b) =>
           getMonthOrder(a.month.toLowerCase()) -
-          getMonthOrder(b.month.toLowerCase())
+          getMonthOrder(b.month.toLowerCase()),
       );
 
       return {
@@ -65,7 +65,7 @@ const AdminDashboard: FunctionalComponent<AdminDashboardProps> = memo(
     const toggleNotice = useCallback(() => setIsNotice(false), []);
     const handleConferenceNav = useCallback(
       () => navigate("/conference"),
-      [navigate]
+      [navigate],
     );
     return (
       <>
@@ -189,7 +189,7 @@ const AdminDashboard: FunctionalComponent<AdminDashboardProps> = memo(
               </div>
             </div>
 
-            <div className="flex flex-col justify-between w-full h-full border rounded">
+            {/* <div className="flex flex-col justify-between w-full h-full border rounded">
               <div className="flex justify-start items-center">
                 <div className="m-7 p-2 w-12 h-12 bg-[red] flex justify-center items-center rounded-sm text-white">
                   <DashboardCardIcon />
@@ -215,7 +215,7 @@ const AdminDashboard: FunctionalComponent<AdminDashboardProps> = memo(
                     : "0 Payment"}
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="border-t-1 border-gray-100 font-bold text-xl w-full mt-7 pt-5 pb-1 text-left">
             User
@@ -310,12 +310,12 @@ const AdminDashboard: FunctionalComponent<AdminDashboardProps> = memo(
               <BarChart
                 femaleVal={
                   adminDashboardDetails?.genderDistribution?.find(
-                    (g) => g.gender === "F"
+                    (g) => g.gender === "F",
                   )?.count || 0
                 }
                 maleVale={
                   adminDashboardDetails?.genderDistribution?.find(
-                    (g) => g.gender === "M"
+                    (g) => g.gender === "M",
                   )?.count || 0
                 }
               />
@@ -324,7 +324,7 @@ const AdminDashboard: FunctionalComponent<AdminDashboardProps> = memo(
         </div>
       </>
     );
-  }
+  },
 );
 
 AdminDashboard.displayName = "AdminDashboard";
