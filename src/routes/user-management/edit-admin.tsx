@@ -41,7 +41,8 @@ const EditAdmin: FunctionalComponent<EditProps> = ({
   ];
 
   async function submit(values: any) {
-    const { id, roles, ...body } = values;
+    const { id, roles, ...rest } = values;
+    const body = { ...rest, role: roles }; // Include role in the body
     const payload = { id, body };
     const [response, _err] = await updateAdminRequest.makeRequest(payload);
     if (!_err) {
@@ -71,7 +72,7 @@ const EditAdmin: FunctionalComponent<EditProps> = ({
     onSubmit(values, formikHelpers) {
       submit({
         ...values,
-        roles: [values.roles],
+        roles: values.roles, // Pass as string, not array
       });
     },
   });

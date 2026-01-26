@@ -169,12 +169,12 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
       >
         <h1 className="font-bold mb-2 text-2xl text-gray-800">
           {/* Complete your registration */}
-          Kindly confirm your email address to complete your registration
+          Kindly confirm your details to complete your registration
         </h1>
 
         <p className="text-gray-500 mb-5 font-light text-sm text-left">
-          Please confirm your email address and select the checkbox then click
-          on the "Next" button to complete your registration.
+          Please confirm details and select the checkbox then click on the
+          "Next" button to complete your registration.
         </p>
 
         <div className="w-full space-y-4">
@@ -202,6 +202,7 @@ const RegisterDetails: FunctionalComponent<IRegisterDetailsProps> = ({
             onChange={(e) =>
               handleChange("email", (e.target as HTMLInputElement).value)
             }
+            disabled
           />
 
           {/* SCN (Read-only) */}
